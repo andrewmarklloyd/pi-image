@@ -18,7 +18,9 @@ copy_key() {
 }
 
 set_hostname() {
-	new_hostname=${1}
+	username=${1}
+	host=${2}
+	new_hostname=${3}
 	ssh ${username}@${host} "sudo sed -i 's/raspberrypi/${new_hostname}/g' /etc/hostname; sudo sed -i 's/raspberrypi/${new_hostname}/g' /etc/hosts; sudo reboot now & exit"
 }
 
@@ -58,5 +60,16 @@ case ${1} in
 		echo "psk: ${psk}" >> ${tmpYaml}
 		gotpl wpa_supplicant.conf.tmpl < ${tmpYaml} > /Volumes/boot/wpa_supplicant.conf
 		rm ${tmpYaml}
+		;;
+	config-hostname )
+		username=${2}
+		host=${3}
+		echo 'Enter the new hostname of the device.'
+		read new_hostname
+		if [[ -z ${username} || -z ${host} || -z ${new_hostname} ]]; then
+		  echo "Wrong arguments used"
+		  exit 1
+		fi
+		set_hostname ${username} ${host} ${new_hostname}
 		;;
 esac
