@@ -6,9 +6,18 @@ get_image() {
 	sub=${xml#*href=\"}
 	url=${sub%\">here*}
 	curl -O ${url}
+	if [[ ! -d /Applications/balenaEtcher.app ]]; then
+		echo "balenaEtcher application not found. Download at https://www.balena.io/etcher/"
+		exit 1
+	fi
+	echo
+	echo "Opening balena Etcher. Select image from the downloaded file at $(pwd). Press enter to continue."
+	read
+	open /Applications/balenaEtcher.app
 }
 
 enable_ssh() {
+	echo "Enabling ssh on pi"
 	touch /Volumes/boot/ssh
 }
 
@@ -25,21 +34,35 @@ set_hostname() {
 }
 
 configure_wifi() {
+	echo "** The WIFI on Raspberry pi is 2.4GHz only, unless you have a 5GHz dongle. Press enter to continue."
+	read
+	echo 'Enter the ssid of the wifi network.'
+	read ssid
+	echo 'Enter the psk of the wifi network.'
+	read -s psk
+	if [[ -z ${ssid} || -z ${psk} ]]; then
+	  echo "Wrong arguments used"
+	  exit 1
+	fi
+	sed "s/{{.ssid}}/${ssid}/" wpa_supplicant.conf.tmpl \
+	| sed "s/{{.psk}}/${psk}/" > /Volumes/boot/wpa_supplicant.conf
+	echo "Writing wifi connection information to /Volumes/boot/wpa_supplicant.conf. You may now safely eject the SD card, insert it into the Pi, and turn it on."
 	echo
+	echo "To connect run 'ssh pi@raspberrypi.local'"
 }
 
 
 case ${1} in
+	get-image )
+		get_image
+		;;
 	enable-ssh )
-		configure_ssh
+		enable_ssh
 		;;
 	copy-key )
 		username=${2}
 		host=${3}
 		ssh_key_path=${4}
-		echo $username
-		echo $host
-		echo $ssh_key_path
 		if [[ -z ${username} || -z ${host} || -z ${ssh_key_path} ]]; then
 		  echo "Wrong arguments used"
 		  exit 1
@@ -47,19 +70,8 @@ case ${1} in
 		copy_key
 		;;
 	config-wifi )
-		echo 'Enter the ssid of the wifi network.'
-		read ssid
-		echo 'Enter the psk of the wifi network.'
-		read -s psk
-		if [[ -z ${ssid} || -z ${psk} ]]; then
-		  echo "Wrong arguments used"
-		  exit 1
-		fi
-		tmpYaml=$(mktemp)
-		echo "ssid: ${ssid}" > ${tmpYaml}
-		echo "psk: ${psk}" >> ${tmpYaml}
-		gotpl wpa_supplicant.conf.tmpl < ${tmpYaml} > /Volumes/boot/wpa_supplicant.conf
-		rm ${tmpYaml}
+		configure_wifi
+		enable_ssh
 		;;
 	config-hostname )
 		username=${2}
