@@ -33,6 +33,12 @@ set_hostname() {
 	ssh ${username}@${host} "sudo sed -i 's/raspberrypi/${new_hostname}/g' /etc/hostname; sudo sed -i 's/raspberrypi/${new_hostname}/g' /etc/hosts; sudo reboot now & exit"
 }
 
+set_timezone() {
+  username=${1}
+  host=${2}
+  ssh ${username}@${host} "sudo timedatectl set-timezone America/Los_Angeles"
+}
+
 configure_wifi() {
 	echo "** The WIFI on Raspberry pi is 2.4GHz only, unless you have a 5GHz dongle. Press enter to continue."
 	read
