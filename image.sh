@@ -57,12 +57,23 @@ configure_wifi() {
 	echo "To connect run 'ssh pi@raspberrypi.local'"
 }
 
+format_drive() {
+	sudo fdisk -l
+	echo "Look for your hard drive and note the Device. Type the name of the device then press enter."
+	read device
+	sudo mkfs.ext4 ${device}
+	echo "Taken from https://raspberrytips.com/format-mount-usb-drive/"
+}
 
 case ${1} in
 	get-image )
 		get_image
 		;;
 	enable-ssh )
+		enable_ssh
+		;;
+	config-wifi )
+		configure_wifi
 		enable_ssh
 		;;
 	copy-key )
@@ -75,10 +86,6 @@ case ${1} in
 		fi
 		copy_key
 		;;
-	config-wifi )
-		configure_wifi
-		enable_ssh
-		;;
 	config-hostname )
 		username=${2}
 		host=${3}
@@ -89,5 +96,14 @@ case ${1} in
 		  exit 1
 		fi
 		set_hostname ${username} ${host} ${new_hostname}
+		;;
+	set-timezone )
+		username=${2}
+		host=${3}
+		if [[ -z ${username} || -z ${host} ]]; then
+		  echo "Wrong arguments used"
+		  exit 1
+		fi
+		set_timezone ${username} ${host}
 		;;
 esac
