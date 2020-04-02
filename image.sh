@@ -59,9 +59,13 @@ configure_wifi() {
 
 format_drive() {
 	sudo fdisk -l
-	echo "Look for your hard drive and note the Device. Type the name of the device then press enter."
+	echo "Look for your hard drive and note the Device. For example '/dev/sda2' Type the name of the device then press enter."
 	read device
 	sudo mkfs.ext4 ${device}
+	sudo blkid | grep ${device}
+	echo "Paste the line from previous output. Press enter to continue"
+	read
+	sudo nano /etc/fstab
 	echo "Taken from https://raspberrytips.com/format-mount-usb-drive/"
 }
 
