@@ -5,7 +5,7 @@ get_image() {
 	xml=$(curl -s https://downloads.raspberrypi.org/raspbian_lite_latest)
 	sub=${xml#*href=\"}
 	url=${sub%\">here*}
-	curl -O ${url}
+	curl --progress-bar -O ${url}
 	if [[ ! -d /Applications/balenaEtcher.app ]]; then
 		echo "balenaEtcher application not found. Download at https://www.balena.io/etcher/"
 		exit 1
