@@ -20,6 +20,15 @@ func formHandler(w http.ResponseWriter, r *http.Request) {
 	createWPAFile(ssid, psk)
 	reconfigWifi()
 	fmt.Fprintf(w, "<h1>Successfully configured Wifi, rebooting now.</h1><h1>Visit <a href=http://pi-hole.local/admin>http://pi-hole.local/admin</a> to view the application.</h1><br><br><a href=\"/\">Home</a>")
+	reboot()
+}
+
+func reboot() {
+	cmd := exec.Command("sudo", "reboot", "now")
+	err := cmd.Run()
+	if err != nil {
+		log.Fatalf("cmd.Run() failed with %s\n", err)
+	}
 }
 
 func reconfigWifi() {
