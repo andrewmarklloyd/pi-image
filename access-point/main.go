@@ -15,14 +15,14 @@ func formHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	fmt.Fprintf(w, "POST request successful")
 	ssid := r.FormValue("ssid")
 	psk := r.FormValue("psk")
-	createWPA(ssid, psk)
-	fmt.Fprintf(w, "%s\n", psk)
+	createWPAFile(ssid, psk)
+	reconfigWifi()
+	fmt.Fprintf(w, "<h1>Successfully configured Wifi, rebooting now.</h1><h1>Visit <a href=http://pi-hole.local/admin>http://pi-hole.local/admin</a> to view the application.</h1><br><br><a href=\"/\">Home</a>")
 }
 
-func test() {
+func reconfigWifi() {
 	cmd := exec.Command("./enable-wifi.sh")
 	err := cmd.Run()
 	if err != nil {
@@ -30,7 +30,7 @@ func test() {
 	}
 }
 
-func createWPA(ssid string, psk string) {
+func createWPAFile(ssid string, psk string) {
 	type Creds struct {
 		SSID string
 		PSK  string
