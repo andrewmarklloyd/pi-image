@@ -110,7 +110,7 @@ case ${1} in
 		fi
 		set_timezone ${username} ${host}
 		;;
-	backup-pi
+	backup-pi )
 		sudo dd bs=4m if=/dev/disk2 of=pi-hole-config.img
 		;;
 esac
