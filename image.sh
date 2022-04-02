@@ -6,14 +6,14 @@ get_image() {
 	sub=${xml#*href=\"}
 	url=${sub%\">here*}
 	curl --progress-bar -O ${url}
-	if [[ ! -d /Applications/balenaEtcher.app ]]; then
-		echo "balenaEtcher application not found. Download at https://www.balena.io/etcher/"
+	if [[ ! -d "/Applications/Raspberry Pi Imager.app" ]]; then
+		echo "Raspberry Pi Imager application not found. Download at https://www.raspberrypi.com/software/"
 		exit 1
 	fi
 	echo
-	echo "Opening balena Etcher. Select image from the downloaded file at $(pwd). Press enter to continue."
+	echo "Opening Rpi Imager. Select image from the downloaded file at $(pwd). Press enter to continue."
 	read
-	open /Applications/balenaEtcher.app
+	open /Applications/Raspberry\ Pi\ Imager.app
 }
 
 enable_ssh() {
