@@ -58,6 +58,7 @@ configure_wifi() {
 }
 
 format_drive() {
+	echo "This post is the best I've found so far: https://pimylifeup.com/raspberry-pi-mount-usb-drive/"
 	sudo fdisk -l
 	echo "Look for your hard drive and note the Device. For example '/dev/sda2' Type the name of the device then press enter."
 	read device
@@ -66,7 +67,7 @@ format_drive() {
 	echo "Paste the line from previous output. Press enter to continue"
 	read
 	sudo nano /etc/fstab
-	echo "Taken from https://raspberrytips.com/format-mount-usb-drive/"
+	# UUID=[UUID] /mnt/usb1 [TYPE] defaults,auto,users,rw,nofail,noatime 0 0
 }
 
 case ${1} in
